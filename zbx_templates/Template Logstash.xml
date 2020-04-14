@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2020-04-14T09:09:10Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Logstash</template>
+            <name>Template Logstash</name>
+            <description>Check Logstash status and LLD pipelines.&#13;
+Check JVM memory.&#13;
+Check pipelines events.</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Logstash</name>
+                </application>
+                <application>
+                    <name>Logstash JVM</name>
+                </application>
+                <application>
+                    <name>Logstash pipelines</name>
+                </application>
+                <application>
+                    <name>Logstash raw data</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Logstash events duration</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.events.duration_in_millis</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <applications>
+                        <application>
+                            <name>Logstash pipelines</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.events.duration_in_millis</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.events</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash events filtered</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.events.filtered</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>Logstash pipelines</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.events.filtered</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.events</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash events in</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.events.in</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>Logstash pipelines</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.events.in</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.events</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash events out</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.events.out</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>Logstash pipelines</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.events.out</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.events</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash events queue push duration</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.events.queue_push_duration_in_millis</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <applications>
+                        <application>
+                            <name>Logstash pipelines</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.events.queue_push_duration_in_millis</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.events</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash heap max</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.heap_max_in_bytes</key>
+                    <delay>0</delay>
+                    <units>b</units>
+                    <applications>
+                        <application>
+                            <name>Logstash JVM</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.jvm.mem.heap_max_in_bytes</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.jvm</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash heap used</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.heap_used_in_bytes</key>
+                    <delay>0</delay>
+                    <units>b</units>
+                    <applications>
+                        <application>
+                            <name>Logstash JVM</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.jvm.mem.heap_used_in_bytes</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.jvm</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash heap used percent</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.heap_used_percent</key>
+                    <delay>0</delay>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Logstash JVM</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.jvm.mem.heap_used_percent</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.jvm</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash stats events raw</name>
+                    <key>logstash.stats.events</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Raw json data.</description>
+                    <applications>
+                        <application>
+                            <name>Logstash raw data</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Logstash duration per event</name>
+                    <type>CALCULATED</type>
+                    <key>logstash.stats.events.dpere</key>
+                    <value_type>FLOAT</value_type>
+                    <params>last(&quot;logstash.events.duration_in_millis&quot;) / last(&quot;logstash.events.out&quot;)</params>
+                    <description>Event duration = all duration / events out.</description>
+                    <applications>
+                        <application>
+                            <name>Logstash pipelines</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Logstash stats jvm raw</name>
+                    <key>logstash.stats.jvm</key>
+                    <delay>5m</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Raw json data.</description>
+                    <applications>
+                        <application>
+                            <name>Logstash raw data</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Logstash status</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.status</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Logstash</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.status</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.jvm</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{str(green)}=0</expression>
+                            <name>Logstash state error</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Logstash version</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.version</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Logstash</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.version</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.jvm</key>
+                    </master_item>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Logstash pipelines</name>
+                    <key>logstash.pipelines.discovery</key>
+                    <delay>1h</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Logstash {#PIPELINE} events duration</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.duration_in_millis.[{#PIPELINE}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.{#PIPELINE}.events.duration_in_millis</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash {#PIPELINE} events filtered</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.filtered.[{#PIPELINE}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.{#PIPELINE}.events.filtered</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash {#PIPELINE} events in</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.in.[{#PIPELINE}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.{#PIPELINE}.events.in</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash {#PIPELINE} events out</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.out.[{#PIPELINE}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.{#PIPELINE}.events.out</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash {#PIPELINE} events queue push duration</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.queue_push_duration_in_millis.[{#PIPELINE}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.{#PIPELINE}.events.queue_push_duration_in_millis</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash pipeline [{#PIPELINE}] duration per event</name>
+                            <type>CALCULATED</type>
+                            <key>logstash.stats.events.dpere.[{#PIPELINE}]</key>
+                            <params>last(&quot;logstash.events.duration_in_millis.[{#PIPELINE}]&quot;) / last(&quot;logstash.events.out.[{#PIPELINE}]&quot;)</params>
+                            <description>Event duration = all duration / events out.</description>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash pipeline $1 raw</name>
+                            <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            <history>0</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Raw json data.</description>
+                            <applications>
+                                <application>
+                                    <name>Logstash raw data</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$LOGSTASH.JVM.MEMORY.WARN}</macro>
+                    <value>80</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template Logstash:logstash.heap_used_percent.last()}&gt;{$LOGSTASH.JVM.MEMORY.WARN} or ({Template Logstash:logstash.heap_used_in_bytes.last()}&gt; {Template Logstash:logstash.heap_max_in_bytes.last()})</expression>
+            <name>Logstash memory usage over {$LOGSTASH.JVM.MEMORY.WARN}%</name>
+            <opdata>{ITEM.LASTVALUE2} used, {ITEM.LASTVALUE3} max</opdata>
+            <priority>WARNING</priority>
+            <description>JVM heap memory usage to high.</description>
+        </trigger>
+    </triggers>
+</zabbix_export>
