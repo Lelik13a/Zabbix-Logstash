@@ -1,12 +1,7 @@
 # Description
-<<<<<<< HEAD
 Check Logstash 7.x status and LLD pipelines.  
 Check JVM memory.  
-=======
-Check Logstash 7.x status and LLD pipelines.
-Check JVM memory.
->>>>>>> 8f8471d56735846a8421ad59b8b920746a1d441d
-Check pipelines events.
+Check pipelines events.  
 
 It is assumed that the Logstash is listening on a localhost 9600 port.
 
