@@ -1,7 +1,10 @@
 # Description
 Check Logstash 7.x status and LLD pipelines.
+
 Check JVM memory.
+
 Check pipelines events.
+
 
 It is assumed that the Logstash is listening on a localhost 9600 port.
 
