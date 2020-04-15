@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-14T09:09:10Z</date>
+    <date>2020-04-15T07:26:12Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -322,7 +322,7 @@ Check pipelines events.</description>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.pipelines.{#PIPELINE}.events.duration_in_millis</params>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.duration_in_millis</params>
                                 </step>
                                 <step>
                                     <type>MULTIPLIER</type>
@@ -330,7 +330,7 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -346,11 +346,11 @@ Check pipelines events.</description>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.pipelines.{#PIPELINE}.events.filtered</params>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.filtered</params>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -366,11 +366,11 @@ Check pipelines events.</description>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.pipelines.{#PIPELINE}.events.in</params>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.in</params>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -386,11 +386,11 @@ Check pipelines events.</description>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.pipelines.{#PIPELINE}.events.out</params>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.out</params>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -408,7 +408,7 @@ Check pipelines events.</description>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
-                                    <params>$.pipelines.{#PIPELINE}.events.queue_push_duration_in_millis</params>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.queue_push_duration_in_millis</params>
                                 </step>
                                 <step>
                                     <type>MULTIPLIER</type>
@@ -416,14 +416,14 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>Logstash pipeline [{#PIPELINE}] duration per event</name>
                             <type>CALCULATED</type>
                             <key>logstash.stats.events.dpere.[{#PIPELINE}]</key>
-                            <params>last(&quot;logstash.events.duration_in_millis.[{#PIPELINE}]&quot;) / last(&quot;logstash.events.out.[{#PIPELINE}]&quot;)</params>
+                            <params>last(&quot;logstash.events.duration_in_millis.[{#PIPELINE}]&quot;) / ( last(&quot;logstash.events.out.[{#PIPELINE}]&quot;) + 0.001)</params>
                             <description>Event duration = all duration / events out.</description>
                             <applications>
                                 <application>
@@ -433,7 +433,7 @@ Check pipelines events.</description>
                         </item_prototype>
                         <item_prototype>
                             <name>Logstash pipeline $1 raw</name>
-                            <key>logstash.stats.pipelines[{#PIPELINE}]</key>
+                            <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
                             <history>0</history>
                             <trends>0</trends>
                             <value_type>TEXT</value_type>
