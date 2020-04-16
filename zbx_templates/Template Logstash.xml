@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-15T07:26:12Z</date>
+    <date>2020-04-16T09:15:41Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -13,7 +13,8 @@
             <name>Template Logstash</name>
             <description>Check Logstash status and LLD pipelines.&#13;
 Check JVM memory.&#13;
-Check pipelines events.</description>
+Check pipelines events.&#13;
+Check stages events metrics.</description>
             <groups>
                 <group>
                     <name>Templates</name>
@@ -22,6 +23,9 @@ Check pipelines events.</description>
             <applications>
                 <application>
                     <name>Logstash</name>
+                </application>
+                <application>
+                    <name>Logstash events</name>
                 </application>
                 <application>
                     <name>Logstash JVM</name>
@@ -43,7 +47,7 @@ Check pipelines events.</description>
                     <units>s</units>
                     <applications>
                         <application>
-                            <name>Logstash pipelines</name>
+                            <name>Logstash events</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -67,7 +71,7 @@ Check pipelines events.</description>
                     <delay>0</delay>
                     <applications>
                         <application>
-                            <name>Logstash pipelines</name>
+                            <name>Logstash events</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -87,7 +91,7 @@ Check pipelines events.</description>
                     <delay>0</delay>
                     <applications>
                         <application>
-                            <name>Logstash pipelines</name>
+                            <name>Logstash events</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -107,7 +111,7 @@ Check pipelines events.</description>
                     <delay>0</delay>
                     <applications>
                         <application>
-                            <name>Logstash pipelines</name>
+                            <name>Logstash events</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -129,7 +133,7 @@ Check pipelines events.</description>
                     <units>s</units>
                     <applications>
                         <application>
-                            <name>Logstash pipelines</name>
+                            <name>Logstash events</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -210,6 +214,19 @@ Check pipelines events.</description>
                     </master_item>
                 </item>
                 <item>
+                    <name>Logstash stats raw</name>
+                    <key>logstash.stats</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Raw json data.</description>
+                    <applications>
+                        <application>
+                            <name>Logstash raw data</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
                     <name>Logstash stats events raw</name>
                     <key>logstash.stats.events</key>
                     <history>0</history>
@@ -231,7 +248,7 @@ Check pipelines events.</description>
                     <description>Event duration = all duration / events out.</description>
                     <applications>
                         <application>
-                            <name>Logstash pipelines</name>
+                            <name>Logstash events</name>
                         </application>
                     </applications>
                 </item>
@@ -299,6 +316,16 @@ Check pipelines events.</description>
                     <master_item>
                         <key>logstash.stats.jvm</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{diff()}=1</expression>
+                            <recovery_mode>NONE</recovery_mode>
+                            <name>Logstash version has changed</name>
+                            <priority>INFO</priority>
+                            <description>Logstash version has changed. Possible reasons that logstash has been updated or replaced. Ack to close.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
             </items>
             <discovery_rules>
@@ -330,7 +357,7 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
+                                <key>logstash.stats</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -350,7 +377,7 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
+                                <key>logstash.stats</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -370,7 +397,7 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
+                                <key>logstash.stats</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -390,7 +417,7 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
+                                <key>logstash.stats</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -416,7 +443,7 @@ Check pipelines events.</description>
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
+                                <key>logstash.stats</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -431,18 +458,324 @@ Check pipelines events.</description>
                                 </application>
                             </applications>
                         </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Logstash filters and outputs</name>
+                    <key>logstash.pipelines.stages.discovery</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <evaltype>FORMULA</evaltype>
+                        <formula>(A and B) or C</formula>
+                        <conditions>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
+                                <value>filters</value>
+                                <formulaid>B</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#NAME}</macro>
+                                <value>grok</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
+                                <value>outputs</value>
+                                <formulaid>C</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <description>Discover stages:&#13;
+filters (except grok)&#13;
+outputs</description>
+                    <item_prototypes>
                         <item_prototype>
-                            <name>Logstash pipeline $1 raw</name>
-                            <key>logstash.stats.pipelines[&quot;{#PIPELINE}&quot;]</key>
-                            <history>0</history>
-                            <trends>0</trends>
-                            <value_type>TEXT</value_type>
-                            <description>Raw json data.</description>
-                            <applications>
-                                <application>
-                                    <name>Logstash raw data</name>
-                                </application>
-                            </applications>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events duration</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.duration[{#PIPELINE},{#PLUGIN},{#ID}]</key>
+                            <delay>0</delay>
+                            <units>s</units>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].events.duration_in_millis.first()</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events out</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.out[{#PIPELINE},{#PLUGIN},{#ID}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].events.out.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Logstash codecs</name>
+                    <key>logstash.pipelines.stages.discovery[&quot;codecs&quot;]</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
+                                <value>codecs</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <description>Discover stages:&#13;
+codecs</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} decode duration</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.codecs.decode.duration[{#PIPELINE},{#PLUGIN},{#ID}]</key>
+                            <delay>0</delay>
+                            <units>s</units>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].decode.duration_in_millis.first()</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} decode out</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.codecs.decode.out[{#PIPELINE},{#PLUGIN},{#ID}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].decode.out.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Logstash filters, grok</name>
+                    <key>logstash.pipelines.stages.discovery[&quot;filters&quot;,grok]</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <evaltype>AND</evaltype>
+                        <conditions>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
+                                <value>filters</value>
+                                <formulaid>B</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#NAME}</macro>
+                                <value>grok</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <description>Discover stages:&#13;
+filters, grok plugin</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events duration</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.filters.grok.events.duration[{#PIPELINE},{#ID}]</key>
+                            <delay>0</delay>
+                            <units>s</units>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].events.duration_in_millis.first()</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events failures</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.filters.grok.events.failures[{#PIPELINE},{#ID}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].failures.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{change()}&lt;&gt;0</expression>
+                                    <name>Pipeline: {#PIPELINE}, id: {#ID} failures grow</name>
+                                    <priority>INFO</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events matches</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.filters.grok.events.matches[{#PIPELINE},{#ID}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].matches.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events out</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.filters.grok.events.out[{#PIPELINE},{#ID}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].events.out.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Logstash inputs</name>
+                    <key>logstash.pipelines.stages.discovery[&quot;inputs&quot;]</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
+                                <value>inputs</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <description>Discover stages:&#13;
+inputs</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events duration</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.inputs.events.duration[{#PIPELINE},{#PLUGIN},{#ID}]</key>
+                            <delay>0</delay>
+                            <units>s</units>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].events.queue_push_duration_in_millis.first()</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Pipeline: {#PIPELINE}, id: {#ID} events out</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.inputs.events.out[{#PIPELINE},{#PLUGIN},{#ID}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Logstash {#PLUGIN} {#NAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].events.out.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
                         </item_prototype>
                     </item_prototypes>
                 </discovery_rule>

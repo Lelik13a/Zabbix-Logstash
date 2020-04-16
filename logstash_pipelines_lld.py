@@ -20,4 +20,3 @@ for (pipeline, pstats) in data["pipelines"].items():
    res.append({"{#PIPELINE}": pipeline})
 
 print("", json.dumps({"data" : res}))
-
