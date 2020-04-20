@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-16T09:15:41Z</date>
+    <date>2020-04-20T08:24:25Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -98,6 +98,36 @@ Check stages events metrics.</description>
                         <step>
                             <type>JSONPATH</type>
                             <params>$.events.in</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.events</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash events in per min</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.events.in.pm</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>epm</units>
+                    <applications>
+                        <application>
+                            <name>Logstash events</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.events.in</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>60</params>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -374,6 +404,35 @@ Check stages events metrics.</description>
                                 <step>
                                     <type>JSONPATH</type>
                                     <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.filtered</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>logstash.stats</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Logstash {#PIPELINE} events in per min</name>
+                            <type>DEPENDENT</type>
+                            <key>logstash.events.in.pm[{#PIPELINE}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Logstash pipelines</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].events.in</params>
+                                </step>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <params/>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>60</params>
                                 </step>
                             </preprocessing>
                             <master_item>
