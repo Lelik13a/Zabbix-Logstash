@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-20T08:24:25Z</date>
+    <date>2020-06-11T06:19:52Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -196,6 +196,10 @@ Check stages events metrics.</description>
                             <type>JSONPATH</type>
                             <params>$.jvm.mem.heap_max_in_bytes</params>
                         </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>10800</params>
+                        </step>
                     </preprocessing>
                     <master_item>
                         <key>logstash.stats.jvm</key>
@@ -313,6 +317,10 @@ Check stages events metrics.</description>
                             <type>JSONPATH</type>
                             <params>$.status</params>
                         </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>10800</params>
+                        </step>
                     </preprocessing>
                     <master_item>
                         <key>logstash.stats.jvm</key>
@@ -342,6 +350,10 @@ Check stages events metrics.</description>
                             <type>JSONPATH</type>
                             <params>$.version</params>
                         </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED</type>
+                            <params/>
+                        </step>
                     </preprocessing>
                     <master_item>
                         <key>logstash.stats.jvm</key>
@@ -363,6 +375,7 @@ Check stages events metrics.</description>
                     <name>Logstash pipelines</name>
                     <key>logstash.pipelines.discovery</key>
                     <delay>1h</delay>
+                    <lifetime>1d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>Logstash {#PIPELINE} events duration</name>
@@ -416,6 +429,7 @@ Check stages events metrics.</description>
                             <key>logstash.events.in.pm[{#PIPELINE}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <units>epm</units>
                             <applications>
                                 <application>
                                     <name>Logstash pipelines</name>
@@ -518,6 +532,28 @@ Check stages events metrics.</description>
                             </applications>
                         </item_prototype>
                     </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>Logstash Events total and {#PIPELINE}</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template Logstash</host>
+                                        <key>logstash.events.in.pm</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Logstash</host>
+                                        <key>logstash.events.in.pm[{#PIPELINE}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Logstash filters and outputs</name>
@@ -545,6 +581,7 @@ Check stages events metrics.</description>
                             </condition>
                         </conditions>
                     </filter>
+                    <lifetime>1d</lifetime>
                     <description>Discover stages:&#13;
 filters (except grok)&#13;
 outputs</description>
@@ -609,6 +646,7 @@ outputs</description>
                             </condition>
                         </conditions>
                     </filter>
+                    <lifetime>1d</lifetime>
                     <description>Discover stages:&#13;
 codecs</description>
                     <item_prototypes>
@@ -625,12 +663,8 @@ codecs</description>
                             </application_prototypes>
                             <preprocessing>
                                 <step>
-                                    <type>JSONPATH</type>
-                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].decode.duration_in_millis.first()</params>
-                                </step>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <params>0.001</params>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>3600</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -649,8 +683,8 @@ codecs</description>
                             </application_prototypes>
                             <preprocessing>
                                 <step>
-                                    <type>JSONPATH</type>
-                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].decode.out.first()</params>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>3600</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -678,6 +712,7 @@ codecs</description>
                             </condition>
                         </conditions>
                     </filter>
+                    <lifetime>1d</lifetime>
                     <description>Discover stages:&#13;
 filters, grok plugin</description>
                     <item_prototypes>
@@ -788,6 +823,7 @@ filters, grok plugin</description>
                             </condition>
                         </conditions>
                     </filter>
+                    <lifetime>1d</lifetime>
                     <description>Discover stages:&#13;
 inputs</description>
                     <item_prototypes>
