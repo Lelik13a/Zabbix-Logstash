@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-06-11T06:19:52Z</date>
+    <date>2020-08-05T04:46:52Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -351,8 +351,8 @@ Check stages events metrics.</description>
                             <params>$.version</params>
                         </step>
                         <step>
-                            <type>DISCARD_UNCHANGED</type>
-                            <params/>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>24h</params>
                         </step>
                     </preprocessing>
                     <master_item>
