@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-08-05T04:46:52Z</date>
+    <date>2020-08-20T07:11:35Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -103,6 +103,30 @@ Check stages events metrics.</description>
                     <master_item>
                         <key>logstash.stats.events</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>Logstash events filtered from input</name>
+                    <type>CALCULATED</type>
+                    <key>logstash.events.in.filtered</key>
+                    <params>last(&quot;logstash.events.in&quot;) - last(&quot;logstash.events.filtered&quot;)</params>
+                    <description>Logstash events input - events filtered</description>
+                    <applications>
+                        <application>
+                            <name>Logstash events</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Logstash events out from input</name>
+                    <type>CALCULATED</type>
+                    <key>logstash.events.in.out</key>
+                    <params>last(&quot;logstash.events.in&quot;) - last(&quot;logstash.events.out&quot;)</params>
+                    <description>Logstash events input - events out</description>
+                    <applications>
+                        <application>
+                            <name>Logstash events</name>
+                        </application>
+                    </applications>
                 </item>
                 <item>
                     <name>Logstash events in per min</name>
@@ -319,7 +343,7 @@ Check stages events metrics.</description>
                         </step>
                         <step>
                             <type>DISCARD_UNCHANGED_HEARTBEAT</type>
-                            <params>10800</params>
+                            <params>24h</params>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -877,6 +901,10 @@ inputs</description>
             </discovery_rules>
             <macros>
                 <macro>
+                    <macro>{$LOGSTASH.EVENTS.LAG}</macro>
+                    <value>500</value>
+                </macro>
+                <macro>
                     <macro>{$LOGSTASH.JVM.MEMORY.WARN}</macro>
                     <value>80</value>
                 </macro>
@@ -885,6 +913,12 @@ inputs</description>
     </templates>
     <triggers>
         <trigger>
+            <expression>{Template Logstash:logstash.events.in.filtered.last()}&gt;{$LOGSTASH.EVENTS.LAG} or {Template Logstash:logstash.events.in.out.last()}&gt;{$LOGSTASH.EVENTS.LAG}</expression>
+            <name>Logstash events lag over {$LOGSTASH.EVENTS.LAG}</name>
+            <opdata>Diff from input (filtered: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE2})</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
             <expression>{Template Logstash:logstash.heap_used_percent.last()}&gt;{$LOGSTASH.JVM.MEMORY.WARN} or ({Template Logstash:logstash.heap_used_in_bytes.last()}&gt; {Template Logstash:logstash.heap_max_in_bytes.last()})</expression>
             <name>Logstash memory usage over {$LOGSTASH.JVM.MEMORY.WARN}%</name>
             <opdata>{ITEM.LASTVALUE2} used, {ITEM.LASTVALUE3} max</opdata>
@@ -892,4 +926,28 @@ inputs</description>
             <description>JVM heap memory usage to high.</description>
         </trigger>
     </triggers>
+    <graphs>
+        <graph>
+            <name>Logstash events filtered and output from input</name>
+            <graph_items>
+                <graph_item>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template Logstash</host>
+                        <key>logstash.events.in.filtered</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>0040FF</color>
+                    <item>
+                        <host>Template Logstash</host>
+                        <key>logstash.events.in.out</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
 </zabbix_export>
