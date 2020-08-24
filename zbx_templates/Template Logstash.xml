@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-08-20T07:11:35Z</date>
+    <date>2020-08-24T06:47:26Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -32,6 +32,9 @@ Check stages events metrics.</description>
                 </application>
                 <application>
                     <name>Logstash pipelines</name>
+                </application>
+                <application>
+                    <name>Logstash process</name>
                 </application>
                 <application>
                     <name>Logstash raw data</name>
@@ -272,6 +275,97 @@ Check stages events metrics.</description>
                     </master_item>
                 </item>
                 <item>
+                    <name>Logstash CPU Average Load 1 Minute</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.process.cpu.load_avg.1m</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Logstash process</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.process.cpu.load_average.1m</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.process</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash CPU Average Load 5 Minutes</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.process.cpu.load_avg.5m</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Logstash process</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.process.cpu.load_average.5m</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.process</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$LOGSTASH.LA5.MAX.WARN}</expression>
+                            <name>Logstash load average is too high (over {$LOGSTASH.LA5.MAX.WARN} for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Logstash CPU Average Load 15 Minutes</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.process.cpu.load_avg.15m</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Logstash process</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.process.cpu.load_average.15m</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.process</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Logstash CPU Usage</name>
+                    <type>DEPENDENT</type>
+                    <key>logstash.process.cpu.percent</key>
+                    <delay>0</delay>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Logstash process</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.process.cpu.percent</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>logstash.stats.process</key>
+                    </master_item>
+                </item>
+                <item>
                     <name>Logstash stats raw</name>
                     <key>logstash.stats</key>
                     <history>0</history>
@@ -314,6 +408,19 @@ Check stages events metrics.</description>
                     <name>Logstash stats jvm raw</name>
                     <key>logstash.stats.jvm</key>
                     <delay>5m</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Raw json data.</description>
+                    <applications>
+                        <application>
+                            <name>Logstash raw data</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Logstash stats process raw</name>
+                    <key>logstash.stats.process</key>
                     <history>0</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
@@ -589,6 +696,11 @@ Check stages events metrics.</description>
                         <conditions>
                             <condition>
                                 <macro>{#PLUGIN}</macro>
+                                <value>outputs</value>
+                                <formulaid>C</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
                                 <value>filters</value>
                                 <formulaid>B</formulaid>
                             </condition>
@@ -597,11 +709,6 @@ Check stages events metrics.</description>
                                 <value>grok</value>
                                 <operator>NOT_MATCHES_REGEX</operator>
                                 <formulaid>A</formulaid>
-                            </condition>
-                            <condition>
-                                <macro>{#PLUGIN}</macro>
-                                <value>outputs</value>
-                                <formulaid>C</formulaid>
                             </condition>
                         </conditions>
                     </filter>
@@ -687,8 +794,12 @@ codecs</description>
                             </application_prototypes>
                             <preprocessing>
                                 <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].decode.duration_in_millis.first()</params>
+                                </step>
+                                <step>
                                     <type>DISCARD_UNCHANGED_HEARTBEAT</type>
-                                    <params>3600</params>
+                                    <params>1h</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -707,8 +818,12 @@ codecs</description>
                             </application_prototypes>
                             <preprocessing>
                                 <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.pipelines.[&quot;{#PIPELINE}&quot;].plugins.[&quot;{#PLUGIN}&quot;][?(@.id == &quot;{#ID}&quot;)].decode.out.first()</params>
+                                </step>
+                                <step>
                                     <type>DISCARD_UNCHANGED_HEARTBEAT</type>
-                                    <params>3600</params>
+                                    <params>1h</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -725,14 +840,14 @@ codecs</description>
                         <evaltype>AND</evaltype>
                         <conditions>
                             <condition>
-                                <macro>{#PLUGIN}</macro>
-                                <value>filters</value>
-                                <formulaid>B</formulaid>
-                            </condition>
-                            <condition>
                                 <macro>{#NAME}</macro>
                                 <value>grok</value>
                                 <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#PLUGIN}</macro>
+                                <value>filters</value>
+                                <formulaid>B</formulaid>
                             </condition>
                         </conditions>
                     </filter>
@@ -908,6 +1023,11 @@ inputs</description>
                     <macro>{$LOGSTASH.JVM.MEMORY.WARN}</macro>
                     <value>80</value>
                 </macro>
+                <macro>
+                    <macro>{$LOGSTASH.LA5.MAX.WARN}</macro>
+                    <value>2</value>
+                    <description>Load per 5 min considered sustainable. Tune if needed.</description>
+                </macro>
             </macros>
         </template>
     </templates>
@@ -927,6 +1047,34 @@ inputs</description>
         </trigger>
     </triggers>
     <graphs>
+        <graph>
+            <name>Logstash CPU LA</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template Logstash</host>
+                        <key>logstash.process.cpu.load_avg.1m</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template Logstash</host>
+                        <key>logstash.process.cpu.load_avg.5m</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template Logstash</host>
+                        <key>logstash.process.cpu.load_avg.15m</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
         <graph>
             <name>Logstash events filtered and output from input</name>
             <graph_items>
